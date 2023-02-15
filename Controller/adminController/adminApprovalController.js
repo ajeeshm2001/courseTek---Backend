@@ -40,3 +40,34 @@ module.exports.userApproval = (async(req,res)=>{
         res.json({err,approved:false})
     }
 })
+
+module.exports.userDisapproval = (async(req,res)=>{
+    try{
+        console.log("kk");
+        const user = await userModel.findById({_id:req.params.id})
+        let config = {
+            service : "gmail",
+            auth:{
+                user:process.env.EMAIL,
+                pass:process.env.PASSWORD
+            }
+        }
+        let transporter = nodemailer.createTransport(config);
+
+        let info = await transporter.sendMail({
+            from: `${process.env.EMAIL}`, // sender address
+            to: `${user.email}`, // list of receivers
+            subject: "Hello ✔", // Subject line
+            text: "", // plain text body
+            html: `<b>Hi ${user.name},</b> <br> <b>Thank for interest in Coursetek.But currently you have not access to the ${user.course}  course <b>`, // html body
+          });
+          if(info.messageId){
+            await userModel.findByIdAndDelete({_id:req.params.id})
+          }
+          console.log(info.messageId);
+          res.json({disapproved:true})
+    }
+    catch(err){
+        res.json({err,disapproved:false})
+    }
+})

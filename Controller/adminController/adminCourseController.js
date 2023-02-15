@@ -28,6 +28,7 @@ module.exports.getCourse = (async(req,res)=>{
 module.exports.getOneCourse = (async(req,res)=>{
     try{
         const course = await courseModels.findOne({_id:req.params.id})
+        console.log(course);
         res.json({course,status:true})
     }
     catch(err){
@@ -60,8 +61,10 @@ module.exports.deleteCourse = (async(req,res)=>{
 
 module.exports.courseSchedule = (async(req,res)=>{
     try{
+        console.log(req.params.id);
         const {subject,date,slot}=req.body;
-        const schedule = await scheduleModel.create({courseId:req.params.id,subject,date,slot})
+        const id = mongoose.Types.ObjectId(req.params.id)
+        const schedule = await scheduleModel.create({courseId:id,subject,date,slot})
         // const course = await courseModels.findByIdAndUpdate({_id:req.params.id},{$push:{scheduldeddates:obj}})
         res.json({schedule,status:true})
     }
@@ -70,3 +73,25 @@ module.exports.courseSchedule = (async(req,res)=>{
         res.json({err,status:false})
     }
 })
+
+
+module.exports.scheduledClasses = (async(req,res)=>{
+    try{
+        const classes = await scheduleModel.aggregate([
+            {
+                $lookup:{
+                    from:"courses",
+                    foreignField:"_id",
+                    localField:"courseId",
+                    as:"courses"
+                }
+            }
+        ])
+        res.json({data:classes,status:true})
+    }
+    catch(err){
+        res.json({err,status:false})
+    }
+})
+
+module.exports

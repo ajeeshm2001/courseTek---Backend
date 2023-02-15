@@ -1,6 +1,6 @@
-const { adminApprovalList, userApproval } = require('../Controller/adminController/adminApprovalController');
+const { adminApprovalList, userApproval, userDisapproval } = require('../Controller/adminController/adminApprovalController');
 const { adminLogin } = require('../Controller/adminController/adminAuthController');
-const { addCourse, editCourse, deleteCourse, courseSchedule, getCourse, getOneCourse } = require('../Controller/adminController/adminCourseController');
+const { addCourse, editCourse, deleteCourse, courseSchedule, getCourse, getOneCourse, scheduledClasses } = require('../Controller/adminController/adminCourseController');
 const router = require('express').Router()
 
 // Admin Login
@@ -27,9 +27,17 @@ router.get('/approvallist',adminApprovalList)
 //Admin User Approval 
 router.patch('/approval/:id',userApproval)
 
+//Admin User Disapproval
+router.delete('/disapproval/:id',userDisapproval)
 
 //Admin Course Schedule
 router.post('/schedule/:id',courseSchedule)
+
+//Admin Scheduled Classes
+router.get('/scheduled',scheduledClasses)
+
+//Admin Date Scheduled Classes
+router.post('/dateclass',)
 
 
 module.exports=router;
